@@ -1,0 +1,148 @@
+# Trinity Draft Canonical Terminology & Glossary
+
+keywords:
+  On Entry:
+    type: timing
+    jp: 登場時
+    color: "#2e60c4"
+    desc: "Triggers immediately when this card is placed onto the battlefield."
+  On Attack:
+    type: timing
+    jp: アタック時
+    color: "#803ec4"
+    desc: "Triggers when this unit initiates an attack."
+  Trigger:
+    type: timing
+    jp: トリガー
+    color: "#ce7622"
+    desc: "Triggers automatically when the stated condition is met."
+  Activate:
+    type: timing
+    jp: 起動
+    color: "#269458"
+    desc: "Can be activated by the player during their turn by paying the indicated cost."
+  Continuous:
+    type: timing
+    jp: 常時
+    color: "#1c8096"
+    desc: "A passive effect active as long as this card remains in the specified zone."
+  On Destroy:
+    type: timing
+    jp: 破壊時
+    color: "#5c5c68"
+    desc: "Triggers when this card is destroyed and sent to the graveyard."
+  Shadow Condition:
+    type: timing
+    jp: シャドウ条件
+    color: "#4e347a"
+    desc: "Timing condition required to play this card from the Shadow Zone."
+
+auras:
+  Quick Aura:
+    jp: クイックオーラ
+    desc: "This unit can attack on the turn it enters the battlefield."
+  Bad Aura:
+    jp: バッドオーラ
+    desc: "When this unit loses a battle, destroy the opponent's battling unit."
+  Sky Aura:
+    jp: スカイオーラ
+    desc: "This unit cannot be blocked by units without Sky Aura."
+  Steel Aura:
+    jp: スティールオーラ
+    aliases: ["Steal Aura"]
+    desc: "Attacks hit the Life Deck directly, ignoring Walls."
+
+summons:
+  Shinra Summon:
+    jp: 神羅召喚
+    desc: "Alternative summon: stack on top of battlefield units whose total cost matches exactly."
+  ZERO Summon:
+    jp: ZERO召喚
+    desc: "Alternative summon: cost becomes 0 and loses Color Condition when specified requirements are met."
+  Reduced Summon:
+    jp: 軽減召喚
+    desc: "Summon cost is reduced according to the specified condition."
+
+costs:
+  Bloody Drive:
+    jp: ブラッディドライブ
+    desc: "Take damage from a chosen Favorable Wall as an activation cost."
+  Soul Flare:
+    jp: ソウルフレア
+    desc: "Send cards from this unit's Soul to the graveyard as an activation cost."
+  Counter Flare:
+    jp: カウンターフレア
+    desc: "Remove Trinity Counters from your Reserve as an activation cost."
+  Counter Vortex:
+    jp: カウンターヴォルテックス
+    desc: "Remove 10 Trinity Counters from your Reserve to unleash a massive effect."
+  Abyss Gate:
+    jp: アビスゲート
+    desc: "Place cards from your graveyard into this unit's Soul as an activation cost."
+  Alchemy:
+    jp: アルケミー
+    desc: "Destroy an Equip or Set card on your battlefield to activate."
+  Combine:
+    jp: 合体
+    desc: "Place specified battlefield cards into this unit's Soul to transform its stats."
+
+thresholds:
+  Overdrive:
+    jp: オーバードライブ
+    desc: "Condition met if you have at least the specified amount of Acquired Life."
+  Overcount:
+    jp: オーバーカウント
+    desc: "Condition met if you have at least the specified amount of Trinity Counters in your Reserve."
+  Requiem:
+    jp: レクイエム
+    desc: "Condition met if at least the specified number of units were sent to the graveyard from the battlefield this turn."
+
+special:
+  Oni Charge:
+    jp: 鬼チャージ
+    desc: "Triggers when this card is placed into the Color Zone for Color Charge."
+  Jigoku Back:
+    jp: 地獄バック
+    desc: "Triggers when this card is sent directly from your deck to the graveyard, allowing it to enter the battlefield without paying cost."
+  Color Shift:
+    jp: カラーシフト
+    desc: "When paying a summon cost, you may send this unit to the graveyard to generate the indicated basic colors."
+  Adjustment:
+    jp: 調整
+    desc: "Look at the top X cards of your deck and place them on the top or bottom of your deck in any order."
+  Burst:
+    jp: バースト
+    desc: "Effect triggered when this card is revealed during a Burst Check from the Life Deck."
+  Epic Rule:
+    jp: エピックルール
+    desc: "At game start, choose 1 from outside the game into hand. Returns to deck instead of graveyard."
+
+races:
+  Dragon: { jp: ドラゴン }
+  Beast: { jp: 魔獣 / 獣 }
+  War Knight:
+    jp: 戦騎
+    aliases: ["Cavalry", "War Cavalry"]
+  Nightmare: { jp: ナイトメア }
+  Machine: { jp: 機神 / マシン / 兵器 }
+  Valkyria: { jp: 戦姫 / ヴァルキリア }
+  Elemental: { jp: 精霊 / エレメンタル }
+  Shark: { jp: サメ / シャーク }
+  Abyss: { jp: アビス / 深海 }
+  Chaos: { jp: 混沌 / カオス }
+  Idea: { jp: イデア }
+  Gaia: { jp: ガイア }
+  Void: { jp: ヴォイド }
+
+zones:
+  Battlefield: { jp: 戦場 }
+  Reserve: { jp: リザーブ }
+  Color Zone: { jp: カラーゾーン }
+  Shadow Zone: { jp: シャドウゾーン }
+  Graveyard: { jp: 墓地 }
+  Life Deck: { jp: ライフデッキ }
+  Acquired Life: { jp: 獲得ライフ }
+  Soul: { jp: ソウル }
+  Wall: { jp: ウォール }
+  Favorable Wall: { jp: 有利なウォール }
+  Unfavorable Wall: { jp: 不利なウォール }

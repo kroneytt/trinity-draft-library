@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trinity Draft - English Card Library</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <span class="gold-text">TRINITY DRAFT</span> Card Library
+    </div>
+    <div class="header-links">
+      <a href="#about">About</a>
+      <a href="glossary.html">Glossary</a>
+      <a href="https://trinitydraft.com/" target="_blank" rel="noopener">Official JP Site ↗</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <aside class="sidebar">
+      <h2>Filters</h2>
+
+      <div class="filter-group">
+        <label for="search">Search</label>
+        <input type="text" id="search" placeholder="Name, effect, or keyword...">
+      </div>
+
+      <div class="filter-group">
+        <label>Expansion</label>
+        <div class="checkbox-row">
+          <label><input type="checkbox" name="expansion" value="TD-01" checked> TD-01</label>
+          <label><input type="checkbox" name="expansion" value="TD-02" checked> TD-02</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Color</label>
+        <div class="color-chips">
+          <button type="button" class="chip-btn red active" data-color="Red">Red</button>
+          <button type="button" class="chip-btn yellow active" data-color="Yellow">Yellow</button>
+          <button type="button" class="chip-btn blue active" data-color="Blue">Blue</button>
+          <button type="button" class="chip-btn purple active" data-color="Purple">Purple</button>
+          <button type="button" class="chip-btn colorless active" data-color="Colorless">Colorless</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Rarity</label>
+        <div class="checkbox-grid">
+          <label><input type="checkbox" name="rarity" value="Epic" checked> Epic</label>
+          <label><input type="checkbox" name="rarity" value="Legend" checked> Legend</label>
+          <label><input type="checkbox" name="rarity" value="Rare" checked> Rare</label>
+          <label><input type="checkbox" name="rarity" value="Uncommon" checked> Uncommon</label>
+          <label><input type="checkbox" name="rarity" value="Common" checked> Common</label>
+          <label><input type="checkbox" name="rarity" value="Void" checked> Void</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Card Type</label>
+        <div class="checkbox-row">
+          <label><input type="checkbox" name="type" value="Unit" checked> Unit</label>
+          <label><input type="checkbox" name="type" value="Spell" checked> Spell</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="race-select">Race</label>
+        <select id="race-select">
+          <option value="">All Races</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <button id="reset-filters" class="reset-btn">Reset All Filters</button>
+      </div>
+    </aside>
+
+    <section class="content-area">
+      <div class="content-header">
+        <div id="card-count" class="count-badge">Loading cards...</div>
+        <div class="sort-controls">
+          <label for="sort-select">Sort By:</label>
+          <select id="sort-select">
+            <option value="id_asc">Card ID (Ascending)</option>
+            <option value="id_desc">Card ID (Descending)</option>
+            <option value="cost_asc">Cost (Low to High)</option>
+            <option value="cost_desc">Cost (High to Low)</option>
+            <option value="power_desc">Power (High to Low)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="card-grid" class="card-grid"></div>
+    </section>
+  </main>
+
+  <!-- Modal for Card Detail View -->
+  <div id="card-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

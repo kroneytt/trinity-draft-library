@@ -1,0 +1,16 @@
+# Per-card layout overrides and data not present in the spreadsheet.
+# Keys are scan file stems (Card_ID without denominator, spaces -> "_").
+# All positions are fractions of card height/width.
+#
+#   frame_top:   where the English text frame starts (default 0.515)
+#   illustrator: illustrator credit to re-draw on the frame
+#   corrections: field fixes found during the scan audit (applied over the xlsx)
+
+TD-01_LEG_01:
+  illustrator: "TAPI岡"
+  frame_top: 0.565
+
+TD-01_X01:
+  illustrator: "タカヤマトシアキ"
+  corrections:
+    Color_Condition: "2 Red"   # scan shows 2 red diamonds; xlsx said "1 Red"

@@ -287,9 +287,9 @@ def draw_lines(d, lines, x0, y0, size):
 
 
 # --------------------------------------------------------------------------- render
-def render(stem: str, card: dict, ov: dict) -> list[str]:
+def render(stem: str, card: dict, ov: dict, src: Path | None = None) -> list[str]:
     issues = []
-    base = Image.open(JP_DIR / f"{stem}.webp").convert("RGBA")
+    base = Image.open(src or JP_DIR / f"{stem}.webp").convert("RGBA")
     W, H = base.size[0] * SS, base.size[1] * SS
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
@@ -413,20 +413,32 @@ def render(stem: str, card: dict, ov: dict) -> list[str]:
     return issues
 
 
+def loose_key(s: str) -> str:
+    """'TD01_R_13' and 'TD-01_R_013' both -> 'TD01R13' (case/hyphen/underscore/zero-pad insensitive)."""
+    s = re.sub(r"[-_\s]", "", s.upper())
+    return re.sub(r"(?<=\D)0+(?=\d)", "", s)
+
+
 def main(argv: list[str]) -> int:
     cards = load_cards()
     overrides = yaml.safe_load(OVERRIDES.read_text(encoding="utf-8")) or {}
-    stems = argv or sorted(p.stem for p in JP_DIR.glob("*.webp"))
+    by_key = {loose_key(s): s for s in cards}  # loose key -> canonical stem
+    ov_by_key = {loose_key(s): v for s, v in overrides.items()}
+    wanted = {loose_key(a.removesuffix(".webp")) for a in argv}
     report = []
-    for stem in stems:
-        card = cards.get(stem)
-        if not card:
-            report.append(f"- `{stem}`: no matching Card_ID in cards.xlsx")
+    for src in sorted(JP_DIR.glob("*.webp")):
+        k = loose_key(src.stem)
+        if wanted and k not in wanted:
             continue
-        ov = overrides.get(stem) or {}
-        card = {**card, **(ov.get("corrections") or {})}
-        issues = render(stem, card, ov)
-        print(f"{stem}: {'OK' if not issues else '; '.join(issues)}")
+        stem = by_key.get(k)
+        if not stem:
+            report.append(f"- `{src.name}`: no matching Card_ID in cards.xlsx")
+            print(f"{src.name}: NO MATCH")
+            continue
+        ov = ov_by_key.get(k) or {}
+        card = {**cards[stem], **(ov.get("corrections") or {})}
+        issues = render(stem, card, ov, src)
+        print(f"{src.name} -> {stem}: {'OK' if not issues else '; '.join(issues)}")
         report += [f"- `{stem}`: {i}" for i in issues]
     (REPORTS / "overflow.md").write_text("# Overlay issues\n\n" + ("\n".join(report) or "None.") + "\n", encoding="utf-8")
     return 0

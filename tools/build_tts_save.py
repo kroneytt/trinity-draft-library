@@ -14,8 +14,8 @@ DATA_PATH = ROOT / "data" / "cards.json"
 LUA_PATH = ROOT / "tts" / "lua" / "Global.lua"
 OUTPUT_SAVE = ROOT / "tts" / "TrinityDraft_Save.json"
 
-DEFAULT_BACK = "https://raw.githubusercontent.com/trinity-draft/assets/main/card_back.jpg"
-DEFAULT_FRONT_BASE = "https://raw.githubusercontent.com/trinity-draft/assets/main/images/en/"
+DEFAULT_BACK = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/card_back.jpg"
+DEFAULT_FRONT_BASE = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/en/"
 
 
 def format_card_tooltip(c: dict) -> str:

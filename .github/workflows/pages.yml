@@ -32,6 +32,14 @@ jobs:
           mkdir -p site/images
           cp -r images/en site/images/en
           cp images/card_back.jpg site/images/
+          pip install pillow
+          python - <<'EOF'
+          from pathlib import Path
+          from PIL import Image
+          out = Path("site/images/thumb"); out.mkdir(parents=True, exist_ok=True)
+          for p in Path("images/en").glob("*.jpg"):
+              im = Image.open(p); im.thumbnail((360, 520)); im.save(out / p.name, quality=82)
+          EOF
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3

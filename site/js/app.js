@@ -95,6 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
       el.onclick = () => showModal(c);
 
       el.innerHTML = `
+        <img class="card-thumb" loading="lazy" alt="${c.name.en}" src="images/thumb/${c.slug}.jpg"
+             onerror="if(!this.dataset.s){this.dataset.s=1;this.src='images/en/${c.slug}.jpg';}else if(this.dataset.s==1){this.dataset.s=2;this.src='../images/en/${c.slug}.jpg';}else{this.onerror=null;this.style.display='none';}">
         <div class="card-header">
           <span class="card-id-badge">${c.id}</span>
           <span class="card-rarity rarity-${c.rarity}">${c.rarity}</span>

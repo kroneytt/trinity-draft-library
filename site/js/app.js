@@ -76,10 +76,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return true;
     });
 
+        const rarityRank = { "Epic": 6, "Legend": 5, "Rare": 4, "Uncommon": 3, "Common": 2, "Void": 1 };
+
     // Sort
     filtered.sort((a, b) => {
-      if (sortVal === "id_asc") return a.id.localeCompare(b.id);
-      if (sortVal === "id_desc") return b.id.localeCompare(a.id);
+      if (sortVal === "id_asc") {
+        if (a.expansion !== b.expansion) return a.expansion.localeCompare(b.expansion);
+        const rankA = rarityRank[a.rarity] || 0;
+        const rankB = rarityRank[b.rarity] || 0;
+        if (rankA !== rankB) return rankB - rankA;
+        return a.id.localeCompare(b.id);
+      }
+      if (sortVal === "id_desc") {
+        if (a.expansion !== b.expansion) return b.expansion.localeCompare(a.expansion);
+        const rankA = rarityRank[a.rarity] || 0;
+        const rankB = rarityRank[b.rarity] || 0;
+        if (rankA !== rankB) return rankA - rankB;
+        return b.id.localeCompare(a.id);
+      }
       if (sortVal === "cost_asc") return (a.cost || 0) - (b.cost || 0);
       if (sortVal === "cost_desc") return (b.cost || 0) - (a.cost || 0);
       if (sortVal === "power_desc") return (b.power || 0) - (a.power || 0);

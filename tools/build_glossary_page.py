@@ -16,13 +16,73 @@ html_template = """<!DOCTYPE html>
   <title>Trinity Draft - Glossary</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .glossary-section { margin-bottom: 40px; }
-    .glossary-section h2 { border-bottom: 2px solid #ceb352; padding-bottom: 5px; text-transform: capitalize; }
-    .term-card { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-    .term-name { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; }
-    .term-badge { padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 0.8em; margin-left: 10px; vertical-align: super;}
-    .term-desc { margin-top: 10px; color: #555; line-height: 1.5; }
-    .term-jp { color: #888; font-size: 0.9em; font-style: italic; }
+    .glossary-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .glossary-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .glossary-header h1 {
+      font-size: 2.5rem;
+      color: #333;
+    }
+    .glossary-section {
+      margin-bottom: 50px;
+    }
+    .glossary-section h2 {
+      border-bottom: 2px solid #ceb352;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      text-transform: capitalize;
+      font-size: 1.8rem;
+      color: #444;
+    }
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .term-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .term-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 10px;
+    }
+    .term-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #222;
+    }
+    .term-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .term-desc {
+      color: #555;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -36,9 +96,11 @@ html_template = """<!DOCTYPE html>
     </div>
   </header>
 
-  <main class="container">
-    <h1>Glossary & Terminology</h1>
-    <p>This glossary defines the keywords, auras, zones, and standard terminology used across Trinity Draft.</p>
+  <main class="glossary-container">
+    <div class="glossary-header">
+      <h1>Glossary & Terminology</h1>
+      <p>A comprehensive guide to keywords, auras, zones, and standard terminology used in Trinity Draft.</p>
+    </div>
 
 {content}
   </main>
@@ -51,7 +113,7 @@ content_html = ""
 for category, terms in data.items():
     if not terms:
         continue
-    content_html += f"    <div class='glossary-section'>\n      <h2>{category}</h2>\n"
+    content_html += f"    <div class='glossary-section'>\n      <h2>{category}</h2>\n      <div class='term-grid'>\n"
     for name, info in terms.items():
         if info is None:
             info = {}
@@ -63,19 +125,21 @@ for category, terms in data.items():
         desc = info.get("desc", "")
         jp = info.get("jp", "")
         
-        content_html += f"""      <div class='term-card'>
-        <div class='term-name'>{name} {badge_html}</div>
-        """
+        content_html += f"""        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>{name}</span>
+            {badge_html}
+          </div>"""
         if desc:
-            content_html += f"<div class='term-desc'>{desc}</div>"
+            content_html += f"\n          <div class='term-desc'>{desc}</div>"
             
-        content_html += "      </div>\n"
+        content_html += "\n        </div>\n"
         
-    content_html += "    </div>\n"
+    content_html += "      </div>\n    </div>\n"
 
 final_html = html_template.replace("{content}", content_html)
 
 with open(OUT_PATH, "w", encoding="utf-8") as f:
     f.write(final_html)
 
-print(f"Glossary page generated at {OUT_PATH}")
+print(f"Improved glossary page generated at {OUT_PATH}")

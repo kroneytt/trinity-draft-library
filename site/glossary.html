@@ -6,13 +6,73 @@
   <title>Trinity Draft - Glossary</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .glossary-section { margin-bottom: 40px; }
-    .glossary-section h2 { border-bottom: 2px solid #ceb352; padding-bottom: 5px; text-transform: capitalize; }
-    .term-card { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-    .term-name { font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; }
-    .term-badge { padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 0.8em; margin-left: 10px; vertical-align: super;}
-    .term-desc { margin-top: 10px; color: #555; line-height: 1.5; }
-    .term-jp { color: #888; font-size: 0.9em; font-style: italic; }
+    .glossary-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .glossary-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .glossary-header h1 {
+      font-size: 2.5rem;
+      color: #333;
+    }
+    .glossary-section {
+      margin-bottom: 50px;
+    }
+    .glossary-section h2 {
+      border-bottom: 2px solid #ceb352;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      text-transform: capitalize;
+      font-size: 1.8rem;
+      color: #444;
+    }
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .term-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .term-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 10px;
+    }
+    .term-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #222;
+    }
+    .term-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .term-desc {
+      color: #555;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -26,195 +86,405 @@
     </div>
   </header>
 
-  <main class="container">
-    <h1>Glossary & Terminology</h1>
-    <p>This glossary defines the keywords, auras, zones, and standard terminology used across Trinity Draft.</p>
+  <main class="glossary-container">
+    <div class="glossary-header">
+      <h1>Glossary & Terminology</h1>
+      <p>A comprehensive guide to keywords, auras, zones, and standard terminology used in Trinity Draft.</p>
+    </div>
 
     <div class='glossary-section'>
       <h2>keywords</h2>
-      <div class='term-card'>
-        <div class='term-name'>On Entry <span class='term-badge' style='background-color: #2e60c4;'>TIMING</span></div>
-        <div class='term-desc'>Triggers immediately when this card is placed onto the battlefield.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>On Attack <span class='term-badge' style='background-color: #803ec4;'>TIMING</span></div>
-        <div class='term-desc'>Triggers when this unit initiates an attack.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Trigger <span class='term-badge' style='background-color: #ce7622;'>TIMING</span></div>
-        <div class='term-desc'>Triggers automatically when the stated condition is met.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Activate <span class='term-badge' style='background-color: #269458;'>TIMING</span></div>
-        <div class='term-desc'>Can be activated by the player during their turn by paying the indicated cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Continuous <span class='term-badge' style='background-color: #1c8096;'>TIMING</span></div>
-        <div class='term-desc'>A passive effect active as long as this card remains in the specified zone.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>On Destroy <span class='term-badge' style='background-color: #5c5c68;'>TIMING</span></div>
-        <div class='term-desc'>Triggers when this card is destroyed and sent to the graveyard.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Shadow Condition <span class='term-badge' style='background-color: #4e347a;'>TIMING</span></div>
-        <div class='term-desc'>Timing condition required to play this card from the Shadow Zone.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>On Entry</span>
+            <span class='term-badge' style='background-color: #2e60c4;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Triggers immediately when this card is placed onto the battlefield.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>On Attack</span>
+            <span class='term-badge' style='background-color: #803ec4;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Triggers when this unit initiates an attack.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Trigger</span>
+            <span class='term-badge' style='background-color: #ce7622;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Triggers automatically when the stated condition is met.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Activate</span>
+            <span class='term-badge' style='background-color: #269458;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Can be activated by the player during their turn by paying the indicated cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Continuous</span>
+            <span class='term-badge' style='background-color: #1c8096;'>TIMING</span>
+          </div>
+          <div class='term-desc'>A passive effect active as long as this card remains in the specified zone.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>On Destroy</span>
+            <span class='term-badge' style='background-color: #5c5c68;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Triggers when this card is destroyed and sent to the graveyard.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Shadow Condition</span>
+            <span class='term-badge' style='background-color: #4e347a;'>TIMING</span>
+          </div>
+          <div class='term-desc'>Timing condition required to play this card from the Shadow Zone.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>auras</h2>
-      <div class='term-card'>
-        <div class='term-name'>Quick Aura </div>
-        <div class='term-desc'>This unit can attack on the turn it enters the battlefield.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Bad Aura </div>
-        <div class='term-desc'>When this unit loses a battle, destroy the opponent's battling unit.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Sky Aura </div>
-        <div class='term-desc'>This unit cannot be blocked by units without Sky Aura.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Steel Aura </div>
-        <div class='term-desc'>Attacks hit the Life Deck directly, ignoring Walls.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Quick Aura</span>
+            
+          </div>
+          <div class='term-desc'>This unit can attack on the turn it enters the battlefield.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Bad Aura</span>
+            
+          </div>
+          <div class='term-desc'>When this unit loses a battle, destroy the opponent's battling unit.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Sky Aura</span>
+            
+          </div>
+          <div class='term-desc'>This unit cannot be blocked by units without Sky Aura.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Steel Aura</span>
+            
+          </div>
+          <div class='term-desc'>Attacks hit the Life Deck directly, ignoring Walls.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>summons</h2>
-      <div class='term-card'>
-        <div class='term-name'>Shinra Summon </div>
-        <div class='term-desc'>Alternative summon: stack on top of battlefield units whose total cost matches exactly.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>ZERO Summon </div>
-        <div class='term-desc'>Alternative summon: cost becomes 0 and loses Color Condition when specified requirements are met.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Reduced Summon </div>
-        <div class='term-desc'>Summon cost is reduced according to the specified condition.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Shinra Summon</span>
+            
+          </div>
+          <div class='term-desc'>Alternative summon: stack on top of battlefield units whose total cost matches exactly.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>ZERO Summon</span>
+            
+          </div>
+          <div class='term-desc'>Alternative summon: cost becomes 0 and loses Color Condition when specified requirements are met.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Reduced Summon</span>
+            
+          </div>
+          <div class='term-desc'>Summon cost is reduced according to the specified condition.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>costs</h2>
-      <div class='term-card'>
-        <div class='term-name'>Bloody Drive </div>
-        <div class='term-desc'>Take damage from a chosen Favorable Wall as an activation cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Soul Flare </div>
-        <div class='term-desc'>Send cards from this unit's Soul to the graveyard as an activation cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Counter Flare </div>
-        <div class='term-desc'>Remove Trinity Counters from your Reserve as an activation cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Counter Vortex </div>
-        <div class='term-desc'>Remove 10 Trinity Counters from your Reserve to unleash a massive effect.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Abyss Gate </div>
-        <div class='term-desc'>Place cards from your graveyard into this unit's Soul as an activation cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Alchemy </div>
-        <div class='term-desc'>Destroy an Equip or Set card on your battlefield to activate.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Combine </div>
-        <div class='term-desc'>Place specified battlefield cards into this unit's Soul to transform its stats.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Bloody Drive</span>
+            
+          </div>
+          <div class='term-desc'>Take damage from a chosen Favorable Wall as an activation cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Soul Flare</span>
+            
+          </div>
+          <div class='term-desc'>Send cards from this unit's Soul to the graveyard as an activation cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Counter Flare</span>
+            
+          </div>
+          <div class='term-desc'>Remove Trinity Counters from your Reserve as an activation cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Counter Vortex</span>
+            
+          </div>
+          <div class='term-desc'>Remove 10 Trinity Counters from your Reserve to unleash a massive effect.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Abyss Gate</span>
+            
+          </div>
+          <div class='term-desc'>Place cards from your graveyard into this unit's Soul as an activation cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Alchemy</span>
+            
+          </div>
+          <div class='term-desc'>Destroy an Equip or Set card on your battlefield to activate.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Combine</span>
+            
+          </div>
+          <div class='term-desc'>Place specified battlefield cards into this unit's Soul to transform its stats.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>thresholds</h2>
-      <div class='term-card'>
-        <div class='term-name'>Overdrive </div>
-        <div class='term-desc'>Condition met if you have at least the specified amount of Acquired Life.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Overcount </div>
-        <div class='term-desc'>Condition met if you have at least the specified amount of Trinity Counters in your Reserve.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Requiem </div>
-        <div class='term-desc'>Condition met if at least the specified number of units were sent to the graveyard from the battlefield this turn.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Overdrive</span>
+            
+          </div>
+          <div class='term-desc'>Condition met if you have at least the specified amount of Acquired Life.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Overcount</span>
+            
+          </div>
+          <div class='term-desc'>Condition met if you have at least the specified amount of Trinity Counters in your Reserve.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Requiem</span>
+            
+          </div>
+          <div class='term-desc'>Condition met if at least the specified number of units were sent to the graveyard from the battlefield this turn.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>special</h2>
-      <div class='term-card'>
-        <div class='term-name'>Oni Charge </div>
-        <div class='term-desc'>Triggers when this card is placed into the Color Zone for Color Charge.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Jigoku Back </div>
-        <div class='term-desc'>Triggers when this card is sent directly from your deck to the graveyard, allowing it to enter the battlefield without paying cost.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Color Shift </div>
-        <div class='term-desc'>When paying a summon cost, you may send this unit to the graveyard to generate the indicated basic colors.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Adjustment </div>
-        <div class='term-desc'>Look at the top X cards of your deck and place them on the top or bottom of your deck in any order.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Burst </div>
-        <div class='term-desc'>Effect triggered when this card is revealed during a Burst Check from the Life Deck.</div>      </div>
-      <div class='term-card'>
-        <div class='term-name'>Epic Rule </div>
-        <div class='term-desc'>At game start, choose 1 from outside the game into hand. Returns to deck instead of graveyard.</div>      </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Oni Charge</span>
+            
+          </div>
+          <div class='term-desc'>Triggers when this card is placed into the Color Zone for Color Charge.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Jigoku Back</span>
+            
+          </div>
+          <div class='term-desc'>Triggers when this card is sent directly from your deck to the graveyard, allowing it to enter the battlefield without paying cost.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Color Shift</span>
+            
+          </div>
+          <div class='term-desc'>When paying a summon cost, you may send this unit to the graveyard to generate the indicated basic colors.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Adjustment</span>
+            
+          </div>
+          <div class='term-desc'>Look at the top X cards of your deck and place them on the top or bottom of your deck in any order.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Burst</span>
+            
+          </div>
+          <div class='term-desc'>Effect triggered when this card is revealed during a Burst Check from the Life Deck.</div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Epic Rule</span>
+            
+          </div>
+          <div class='term-desc'>At game start, choose 1 from outside the game into hand. Returns to deck instead of graveyard.</div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>races</h2>
-      <div class='term-card'>
-        <div class='term-name'>Dragon </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Beast </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>War Knight </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Nightmare </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Machine </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Valkyria </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Elemental </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Shark </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Abyss </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Chaos </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Idea </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Gaia </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Void </div>
-              </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Dragon</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Beast</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>War Knight</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Nightmare</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Machine</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Valkyria</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Elemental</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Shark</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Abyss</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Chaos</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Idea</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Gaia</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Void</span>
+            
+          </div>
+        </div>
+      </div>
     </div>
     <div class='glossary-section'>
       <h2>zones</h2>
-      <div class='term-card'>
-        <div class='term-name'>Battlefield </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Reserve </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Color Zone </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Shadow Zone </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Graveyard </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Life Deck </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Acquired Life </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Soul </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Wall </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Favorable Wall </div>
-              </div>
-      <div class='term-card'>
-        <div class='term-name'>Unfavorable Wall </div>
-              </div>
+      <div class='term-grid'>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Battlefield</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Reserve</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Color Zone</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Shadow Zone</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Graveyard</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Life Deck</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Acquired Life</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Soul</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Wall</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Favorable Wall</span>
+            
+          </div>
+        </div>
+        <div class='term-card'>
+          <div class='term-header'>
+            <span class='term-name'>Unfavorable Wall</span>
+            
+          </div>
+        </div>
+      </div>
     </div>
 
   </main>

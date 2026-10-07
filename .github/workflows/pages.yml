@@ -27,6 +27,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Copy card images into site
+        run: |
+          mkdir -p site/images
+          cp -r images/en site/images/en
+          cp images/card_back.jpg site/images/
+
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:

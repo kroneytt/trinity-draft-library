@@ -120,8 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="flex: 1 1 300px; min-width: 260px;">
           <div style="background: #111; border-radius: 8px; padding: 12px; text-align: center;">
             <p style="color: #888; font-size: 0.85rem; margin-bottom: 8px;">Card Scan / Preview</p>
-            <img src="../images/en/${card.slug}.jpg" alt="${card.name.en}" 
-                 onerror="this.onerror=null; this.src='../images/jp/${card.slug}.webp'; this.alt='Japanese Scan';" 
+            <img src="images/en/${card.slug}.jpg" alt="${card.name.en}" 
+                 onerror="if(!this.dataset.s){this.dataset.s=1;this.src='../images/en/${card.slug}.jpg';}else if(this.dataset.s==1){this.dataset.s=2;this.src='images/jp/${card.slug}.webp';this.alt='Japanese Scan';}else{this.onerror=null;this.src='../images/jp/${card.slug}.webp';}" 
                  style="width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
           </div>
         </div>

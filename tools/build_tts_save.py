@@ -17,6 +17,13 @@ OUTPUT_SAVE = ROOT / "tts" / "TrinityDraft_Save.json"
 DEFAULT_BACK = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/card_back.jpg"
 DEFAULT_FRONT_BASE = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/en/"
 
+RARITY_MULTIPLIERS = {
+    "Legend": 1,
+    "Rare": 2,
+    "Uncommon": 3,
+    "Common": 4,
+    "Void": 9
+}
 
 def format_card_tooltip(c: dict) -> str:
     lines = []
@@ -36,22 +43,14 @@ def format_card_tooltip(c: dict) -> str:
     return "\n".join(lines)
 
 
-def build_tts_save():
-    with open(DATA_PATH, "r", encoding="utf-8") as f:
-        cards = json.load(f)
-
-    with open(LUA_PATH, "r", encoding="utf-8") as f:
-        lua_script = f.read()
-
-    # Filter draftable cards (Exclude Epics for master pool deck)
-    draft_cards = [c for c in cards if c["rarity"] != "Epic"]
-    epic_cards = [c for c in cards if c["rarity"] == "Epic"]
-
+def create_deck_obj(name, desc, cards_list, pos_x, pos_z, start_idx):
     contained_objects = []
     deck_ids = []
     custom_deck_map = {}
 
-    for idx, c in enumerate(draft_cards, start=1):
+    idx = start_idx
+    for c in cards_list:
+        idx += 1
         card_id_int = idx * 100
         deck_ids.append(card_id_int)
 
@@ -68,7 +67,7 @@ def build_tts_save():
 
         contained_objects.append({
             "Name": "Card",
-            "Transform": {"posX": 0, "posY": 1, "posZ": 0, "rotX": 0, "rotY": 180, "rotZ": 180, "scaleX": 1, "scaleY": 1, "scaleZ": 1},
+            "Transform": {"posX": pos_x, "posY": 2, "posZ": pos_z, "rotX": 0, "rotY": 180, "rotZ": 180, "scaleX": 1, "scaleY": 1, "scaleZ": 1},
             "Nickname": c["name"]["en"],
             "Description": format_card_tooltip(c),
             "GMNotes": json.dumps({"id": c["id"], "rarity": c["rarity"], "cost": c["cost"], "color": c["color"]}),
@@ -76,15 +75,57 @@ def build_tts_save():
             "CustomDeck": {str(idx): custom_deck_map[str(idx)]},
         })
 
-    master_deck_obj = {
+    deck_obj = {
         "Name": "Deck",
-        "Transform": {"posX": 0, "posY": 2, "posZ": 0, "rotX": 0, "rotY": 180, "rotZ": 180, "scaleX": 1, "scaleY": 1, "scaleZ": 1},
-        "Nickname": "Trinity Draft Master Pool",
-        "Description": f"{len(draft_cards)} Draft Cards (Excludes Epics)",
+        "Transform": {"posX": pos_x, "posY": 2, "posZ": pos_z, "rotX": 0, "rotY": 180, "rotZ": 180, "scaleX": 1, "scaleY": 1, "scaleZ": 1},
+        "Nickname": name,
+        "Description": desc,
         "DeckIDs": deck_ids,
         "CustomDeck": custom_deck_map,
         "ContainedObjects": contained_objects,
     }
+    return deck_obj, idx
+
+
+def build_tts_save():
+    with open(DATA_PATH, "r", encoding="utf-8") as f:
+        cards = json.load(f)
+
+    with open(LUA_PATH, "r", encoding="utf-8") as f:
+        lua_script = f.read()
+
+    expansions = list(set(c["expansion"] for c in cards))
+    expansions.sort()
+
+    object_states = []
+    global_idx = 0
+
+    pos_x_offset = -10
+
+    for exp in expansions:
+        exp_cards = [c for c in cards if c["expansion"] == exp]
+        draft_cards = [c for c in exp_cards if c["rarity"] != "Epic"]
+        epic_cards = [c for c in exp_cards if c["rarity"] == "Epic"]
+
+        # Build box multiset
+        box_cards = []
+        for c in draft_cards:
+            count = RARITY_MULTIPLIERS.get(c["rarity"], 1)
+            for _ in range(count):
+                box_cards.append(c)
+
+        if box_cards:
+            deck, global_idx = create_deck_obj(f"Trinity Draft Master Pool ({exp})", f"{len(box_cards)} Draft Cards", box_cards, pos_x_offset, 0, global_idx)
+            object_states.append(deck)
+
+        # Distribute Epics
+        # 3 players
+        if epic_cards:
+            for p in range(1, 4):
+                deck, global_idx = create_deck_obj(f"Player {p} Epics ({exp})", f"4 Epics", epic_cards, pos_x_offset, 5 * p, global_idx)
+                object_states.append(deck)
+
+        pos_x_offset += 10
 
     save_data = {
         "SaveName": "Trinity Draft - English Mod",
@@ -93,16 +134,13 @@ def build_tts_save():
         "Table": "Table_Custom",
         "LuaScript": lua_script,
         "LuaScriptState": "",
-        "ObjectStates": [
-            master_deck_obj
-        ],
+        "ObjectStates": object_states,
     }
 
     with open(OUTPUT_SAVE, "w", encoding="utf-8") as f:
         json.dump(save_data, f, ensure_ascii=False, indent=2)
 
     print(f"TTS Save generated successfully at {OUTPUT_SAVE}")
-    print(f"Total cards in pool: {len(draft_cards)} | Epics separated: {len(epic_cards)}")
 
 
 if __name__ == "__main__":

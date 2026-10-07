@@ -25,7 +25,7 @@
     "break": 3,
     "break_modifier": "",
     "effects": "[On Entry] Put the top 2 cards of your deck into this card's soul. [On Attack] <Optional> <Soul Flare 1> - Send 1 card from this card's soul to the graveyard ▶ If the sent card is Red, choose 1 card on the battlefield with a cost less than or equal to that card's cost and destroy it. If it is a card other than Red, draw 1 card. [Shinra Summon 7] Instead of paying the summon cost, you may put this card on top of units on your battlefield stacked so their total cost is exactly 7.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-01 X02/04",
@@ -52,7 +52,7 @@
     "break": 2,
     "break_modifier": "",
     "effects": "[Trigger] When a [Trinity Counter] is added to your reserve: ▶ During this turn, even if this unit is destroyed, it does not leave the battlefield. [Trigger] <Turn 1> When a [Trinity Counter] is removed from your reserve: ▶ Choose 1 of your units on the battlefield and make it active. [Reduced Summon] <[Trinity Counter]> You can reduce the summon cost by 1 for each [Trinity Counter] in your reserve.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-01 X03/04",
@@ -80,7 +80,7 @@
     "break": 3,
     "break_modifier": "",
     "effects": "[Activate] <Abyss Gate 3> - Put 3 spells from your graveyard into this card's Soul. ▶ [Trinity Counter] +1 (Add 1 Trinity Counter to your Reserve). Until the end of the turn, all Blue units on your battlefield do not leave the battlefield even if destroyed. At the end of this turn, turn this card Active. | [Reduced Summon: Graveyard Spells] For every 3 spells in your graveyard, you can reduce the summon cost by 2.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-01 X04/04",
@@ -107,7 +107,7 @@
     "break": 3,
     "break_modifier": "",
     "effects": "[On Entry] <Optional> <Abyss Gate 2> - Put 2 purple cards from your graveyard into this unit's soul. ▶ Deal 2 damage to each [Unfavorable] wall. [On Attack] <Overdrive 11> - If you have 11 or more gained life ▶ Choose 1 opponent and deal 2 damage to them. [ZERO Summon] <Requiem 3> - If 3 or more units have been sent to the graveyard from the battlefield this turn, this card loses its Color Condition and its summon cost becomes 0.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-01 LEG 01/20",
@@ -825,7 +825,7 @@
     "power_modifier": "+",
     "break": 2,
     "break_modifier": "",
-    "effects": "[Activate] Combine [Machine or Set 2] - Choose 2 [Machine] or [Set] cards on your battlefield and put them into this card's Soul. ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 7000, and Break 4. | [On Attack] <Optional> <Soul Flare 1> - Send 1 Soul from this card to the graveyard. ▶ Choose 1 unit on the battlefield and Rest it.",
+    "effects": "[Activate] Combine [Machine or Set 2] - Choose 2 [Machine] or [Installation] cards on your battlefield and put them into this card's Soul. ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 7000, and Break 4. | [On Attack] <Optional> <Soul Flare 1> - Send 1 Soul from this card to the graveyard. ▶ Choose 1 unit on the battlefield and Rest it.",
     "burst_or_epic": ""
   },
   {
@@ -958,7 +958,7 @@
     "power_modifier": "",
     "break": 1,
     "break_modifier": "",
-    "effects": "[On Entry] Send the top 3 cards of your deck to the graveyard. Then, choose 1 [Equipment] in your graveyard and return it to your hand. [Continuous] If this unit is equipped with an [Equipment] ▶ This unit's Break is +3.",
+    "effects": "[On Entry] Send the top 3 cards of your deck to the graveyard. Then, choose 1 [Equip] in your graveyard and return it to your hand. [Continuous] If this unit is equipped with an [Equip] ▶ This unit's Break is +3.",
     "burst_or_epic": "[BURST] Use this card's [On Entry] effect."
   },
   {
@@ -2209,7 +2209,7 @@
     "power_modifier": "",
     "break": 3,
     "break_modifier": "",
-    "effects": "[On Entry] <Bloody Drive 2> - Choose 1 [Favorable] Wall, and take 2 damage. ▶ Choose twice from the following and perform them. - Choose 1 [Installation] on the battlefield, and destroy it. - Choose 1 [Equipment] on the battlefield, and destroy it. - Draw 1 card.",
+    "effects": "[On Entry] <Bloody Drive 2> - Choose 1 [Favorable] Wall, and take 2 damage. ▶ Choose twice from the following and perform them. - Choose 1 [Installation] on the battlefield, and destroy it. - Choose 1 [Equip] on the battlefield, and destroy it. - Draw 1 card.",
     "burst_or_epic": "[BURST] Discard 1 card from your Color Zone. Then, add 1 Red and 1 Yellow Basic Color."
   },
   {
@@ -2651,7 +2651,7 @@
     "power_modifier": "",
     "break": 1,
     "break_modifier": "",
-    "effects": "[On Entry] If you have an [Equipment] on your battlefield: ▶ Draw 1 card. | [ZERO Summon][Equipment] If you have an [Equipment] on your battlefield, you lose the Color Condition, and the summon cost becomes 0.",
+    "effects": "[On Entry] If you have an [Equip] on your battlefield: ▶ Draw 1 card. | [ZERO Summon][Equip] If you have an [Equip] on your battlefield, you lose the Color Condition, and the summon cost becomes 0.",
     "burst_or_epic": ""
   },
   {
@@ -3294,7 +3294,7 @@
     "break": 2,
     "break_modifier": "",
     "effects": "[Quick Aura] (Can attack the turn it enters the battlefield.) | [On Attack] <Overdrive 8> - If you have 8 or more Acquired Life: ▶ Reveal the top 2 cards of your deck. If they are [Dragon], put them onto the battlefield. Otherwise, put them into this card's Soul. | [Reduced Summon: Dragon] You can reduce this card's summon cost by 2 for each [Dragon] on your battlefield.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-02 X02/04",
@@ -3320,8 +3320,8 @@
     "power_modifier": "+",
     "break": 2,
     "break_modifier": "",
-    "effects": "[On Entry] Choose 1 [Set] card from your graveyard and return it to your hand. | [Trigger] At the end of each turn, <Overdrive 8> - If you have 8 or more Acquired Life: ▶ Set this unit to Active. | [Activate] [Combine: Set 4] - Choose 4 [Machine] or [Set] cards on your battlefield and put them into this card's Soul: ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 15000, and Break 8.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "effects": "[On Entry] Choose 1 [Installation] card from your graveyard and return it to your hand. | [Trigger] At the end of each turn, <Overdrive 8> - If you have 8 or more Acquired Life: ▶ Set this unit to Active. | [Activate] [Combine: Set 4] - Choose 4 [Machine] or [Installation] cards on your battlefield and put them into this card's Soul: ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 15000, and Break 8.",
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-02 X03/04",
@@ -3348,7 +3348,7 @@
     "break": 2,
     "break_modifier": "",
     "effects": "[On Entry] <Overdrive 6> - If you have 6 or more Acquired Life: [Trinity Counter] +2 (Add 2 Trinity Counters to your Reserve). | [Activate] <Counter Vortex> - Remove 10 Trinity Counters from your Reserve: After this turn ends, take an extra turn. (This effect cannot be used during an extra turn.) | [Reduced Summon: Counter] You can reduce this card's summon cost by 1 for each Trinity Counter in your Reserve.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-02 X04/04",
@@ -3375,7 +3375,7 @@
     "break": 3,
     "break_modifier": "",
     "effects": "[On Entry] <Optional> <Abyss Gate 1> - Put 1 [Shot] card from your graveyard into this card's Soul: ▶ If the card put into the Soul has a cost of 3 or less, use that card's effect. | [On Attack] <Overdrive 8> - If you have 8 or more Acquired Life: ▶ Use this card's [On Entry] effect. | [ZERO Summon: Graveyard Spell 7] If you have 7 or more Spells in your graveyard, this loses its Color Condition and its summon cost becomes 0.",
-    "burst_or_epic": "[EPIC Rule] At the start of the game, add 1 chosen type from outside the game to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
+    "burst_or_epic": "[EPIC Rule] At the start of the game, At the start of the game, add your chosen Epic to your hand. Instead of being placed in the graveyard, this card is returned to the deck and shuffled."
   },
   {
     "id": "TD-02 LEG 01/20",
@@ -3530,7 +3530,7 @@
     "power_modifier": "",
     "break": 3,
     "break_modifier": "",
-    "effects": "[On Entry] Choose 1 [Equip] or [Set] card on the battlefield and destroy it. | [Trigger] At the end of each turn, <Overdrive 7> - If you have 7 or more Acquired Life: ▶ Set this unit to Active.",
+    "effects": "[On Entry] Choose 1 [Equip] or [Installation] card on the battlefield and destroy it. | [Trigger] At the end of each turn, <Overdrive 7> - If you have 7 or more Acquired Life: ▶ Set this unit to Active.",
     "burst_or_epic": "[BURST] Draw 1 card. Set all of your units to Active."
   },
   {
@@ -3556,7 +3556,7 @@
     "power_modifier": "",
     "break": 2,
     "break_modifier": "",
-    "effects": "[Continuous] All cards on your battlefield are also treated as [Set] cards. | [Activate] [No Cost] ▶ Choose 1 card in your graveyard and return it to your hand. Then, send this card to the graveyard. (This is not destruction.)",
+    "effects": "[Continuous] All cards on your battlefield are also treated as [Installation] cards. | [Activate] [No Cost] ▶ Choose 1 card in your graveyard and return it to your hand. Then, send this card to the graveyard. (This is not destruction.)",
     "burst_or_epic": "[BURST] Search your deck for 1 card of your choice and add it to your hand."
   },
   {
@@ -4035,7 +4035,7 @@
     "power_modifier": "+",
     "break": 1,
     "break_modifier": "",
-    "effects": "[On Attack] <Optional> [Alchemy] - Choose 1 [Equip] or [Set] card on your battlefield and destroy it: ▶ Set this unit to Active. | [Continuous] <Overdrive 6> - If you have 6 or more Acquired Life: For each type of Basic Color card in your Color Zone, this unit gets Power +1000 and Break +1.",
+    "effects": "[On Attack] <Optional> [Alchemy] - Choose 1 [Equip] or [Installation] card on your battlefield and destroy it: ▶ Set this unit to Active. | [Continuous] <Overdrive 6> - If you have 6 or more Acquired Life: For each type of Basic Color card in your Color Zone, this unit gets Power +1000 and Break +1.",
     "burst_or_epic": "[BURST] Draw 1 card. Add 1 Basic Color of your choice to your Color Zone."
   },
   {
@@ -4062,7 +4062,7 @@
     "power_modifier": "+",
     "break": 2,
     "break_modifier": "",
-    "effects": "[Activate] [Combine: Set 2] - Choose 2 [Machine] or [Set] cards on your battlefield and put them into this card's Soul: ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 6000, and Break 3. | [On Attack] <Optional> [Turn 1] <Soul Flare 1> - Send 1 Soul from this card to the graveyard: ▶ Choose 1 of your other units and set it to Active.",
+    "effects": "[Activate] [Combine: Set 2] - Choose 2 [Machine] or [Installation] cards on your battlefield and put them into this card's Soul: ▶ Until this unit leaves the battlefield, it is treated as a card with [Quick Aura], Power 6000, and Break 3. | [On Attack] <Optional> [Turn 1] <Soul Flare 1> - Send 1 Soul from this card to the graveyard: ▶ Choose 1 of your other units and set it to Active.",
     "burst_or_epic": "[BURST] Draw cards until you have 3 cards in your hand."
   },
   {
@@ -4324,7 +4324,7 @@
     "power_modifier": "+",
     "break": 3,
     "break_modifier": "",
-    "effects": "[On Attack] <Overdrive 8> - If you have 8 or more Acquired Life: During this turn, this unit gets Power +4000 and Break +1. | [Activate] [Alchemy] - Choose 1 [Equip] or [Set] card on your battlefield and destroy it: Until the start of your next turn, this unit gains [Bad Aura].",
+    "effects": "[On Attack] <Overdrive 8> - If you have 8 or more Acquired Life: During this turn, this unit gets Power +4000 and Break +1. | [Activate] [Alchemy] - Choose 1 [Equip] or [Installation] card on your battlefield and destroy it: Until the start of your next turn, this unit gains [Bad Aura].",
     "burst_or_epic": "[BURST] Choose 1 opponent's unit; gain control of that unit until the start of your next turn."
   },
   {
@@ -4426,7 +4426,7 @@
     "break": 2,
     "break_modifier": "",
     "effects": "(Colorless cards cannot be used for Color Charge.) | [On Entry] If 3 or more units on the battlefield have not been sent to the graveyard during this turn: ▶ Destroy this unit.",
-    "burst_or_epic": "[BURST] Traitor - During a Burst Check, you take 1 damage."
+    "burst_or_epic": "[BURST] Betrayal - During a Burst Check, you take 1 damage."
   },
   {
     "id": "TD-02 U 021/102",
@@ -4758,7 +4758,7 @@
     "power_modifier": "+",
     "break": 3,
     "break_modifier": "",
-    "effects": "[Continuous] For each [Set] card on your battlefield, this unit gets Power +2000. | [Activate] [Turn 1] <Counter Flare 1> - Remove 1 Trinity Counter from your Reserve: ▶ Choose 1 card on the battlefield. During this turn, that card is also treated as a [Set] card.",
+    "effects": "[Continuous] For each [Installation] card on your battlefield, this unit gets Power +2000. | [Activate] [Turn 1] <Counter Flare 1> - Remove 1 Trinity Counter from your Reserve: ▶ Choose 1 card on the battlefield. During this turn, that card is also treated as a [Installation] card.",
     "burst_or_epic": "[BURST] Discard 1 card from your Color Zone. Then, add 2 Yellow Basic Colors."
   },
   {
@@ -4811,7 +4811,7 @@
     "power_modifier": "",
     "break": 2,
     "break_modifier": "",
-    "effects": "[Trigger] When your [Equip] or [Set] card is destroyed: ▶ Set this unit to Active.",
+    "effects": "[Trigger] When your [Equip] or [Installation] card is destroyed: ▶ Set this unit to Active.",
     "burst_or_epic": "[BURST] Choose 1 unit on the battlefield; it gets Power +3000 until the end of your next turn."
   },
   {
@@ -4957,7 +4957,7 @@
     "power_modifier": "",
     "break": 2,
     "break_modifier": "",
-    "effects": "[On Entry] Choose 1 [Equip] or [Set] card on the battlefield and destroy it. | [On Attack] <Optional> <Soul Flare 2> - Send 2 Souls from this card to the graveyard: ▶ Use this card's [On Entry] effect. | [Shinra Summon 6] Instead of paying the summon cost, you may place this on top of units on your battlefield stacked so that their total cost is exactly 6.",
+    "effects": "[On Entry] Choose 1 [Equip] or [Installation] card on the battlefield and destroy it. | [On Attack] <Optional> <Soul Flare 2> - Send 2 Souls from this card to the graveyard: ▶ Use this card's [On Entry] effect. | [Shinra Summon 6] Instead of paying the summon cost, you may place this on top of units on your battlefield stacked so that their total cost is exactly 6.",
     "burst_or_epic": "[BURST] Discard 1 card from your Color Zone. Then, add 2 Blue Basic Colors."
   },
   {
@@ -5677,7 +5677,7 @@
     "power_modifier": "",
     "break": 2,
     "break_modifier": "",
-    "effects": "[On Entry] <Optional> [Alchemy] - Choose 1 [Equip] or [Set] card on your battlefield and destroy it: ▶ Choose 1 of your units; it gets Break +1 during this turn. Then, draw 1 card. | [Shinra Summon 3] Instead of paying the summon cost, you may place this on top of units on your battlefield stacked so that their total cost is exactly 3.",
+    "effects": "[On Entry] <Optional> [Alchemy] - Choose 1 [Equip] or [Installation] card on your battlefield and destroy it: ▶ Choose 1 of your units; it gets Break +1 during this turn. Then, draw 1 card. | [Shinra Summon 3] Instead of paying the summon cost, you may place this on top of units on your battlefield stacked so that their total cost is exactly 3.",
     "burst_or_epic": ""
   },
   {
@@ -5703,7 +5703,7 @@
     "power_modifier": "+",
     "break": 2,
     "break_modifier": "",
-    "effects": "[On Entry] <Optional> Choose 1 [Set] card on the battlefield ▶ Destroy that card. Then, the player whose card was destroyed gains [Trinity Counter] +2 (Add 2 Trinity Counters to their Reserve). | [Continuous] <Overcount 5> - If you have 5 or more Trinity Counters: ▶ This unit gets Power +3000 and Break +2.",
+    "effects": "[On Entry] <Optional> Choose 1 [Installation] card on the battlefield ▶ Destroy that card. Then, the player whose card was destroyed gains [Trinity Counter] +2 (Add 2 Trinity Counters to their Reserve). | [Continuous] <Overcount 5> - If you have 5 or more Trinity Counters: ▶ This unit gets Power +3000 and Break +2.",
     "burst_or_epic": ""
   },
   {
@@ -5962,7 +5962,7 @@
     "power_modifier": "",
     "break": 1,
     "break_modifier": "",
-    "effects": "[On Entry] <Optional> [Alchemy] - Choose 1 [Equip] or [Set] card on your battlefield and destroy it: ▶ Choose up to 2 [Equip] or [Set] cards from your graveyard and return them to your hand. (Cards destroyed by this effect cannot be chosen.)",
+    "effects": "[On Entry] <Optional> [Alchemy] - Choose 1 [Equip] or [Installation] card on your battlefield and destroy it: ▶ Choose up to 2 [Equip] or [Installation] cards from your graveyard and return them to your hand. (Cards destroyed by this effect cannot be chosen.)",
     "burst_or_epic": ""
   },
   {
@@ -6551,6 +6551,6 @@
     "break": 3,
     "break_modifier": "",
     "effects": "(Colorless cards cannot be used for Color Charge.)",
-    "burst_or_epic": "[BURST] Traitor - During a Burst Check, you take 1 damage."
+    "burst_or_epic": "[BURST] Betrayal - During a Burst Check, you take 1 damage."
   }
 ]

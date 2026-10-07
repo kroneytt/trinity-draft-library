@@ -130,6 +130,15 @@ function startDraft(player, exp)
     Global.UI.setAttribute("restartPanel", "active", "false")
     Global.UI.setAttribute("statusPanel", "active", "true")
     
+    local other_exp = (exp == "TD-01") and "TD-02" or "TD-01"
+    for _, obj in ipairs(getAllObjects()) do
+        local name = obj.getName()
+        local notes = obj.getGMNotes() or ""
+        if name:find("%(" .. other_exp .. "%)") or notes:find("master_pool_" .. other_exp) then
+            obj.destruct()
+        end
+    end
+
     local deck = getMasterDeck(ACTIVE_EXPANSION)
     if deck then deck.shuffle() end
     
@@ -139,6 +148,15 @@ end
 function dealRound()
     Global.UI.setAttribute("statusText", "text", "Round " .. ROUND .. "\nPassing: " .. getPassDirection())
     
+    local other_exp = (exp == "TD-01") and "TD-02" or "TD-01"
+    for _, obj in ipairs(getAllObjects()) do
+        local name = obj.getName()
+        local notes = obj.getGMNotes() or ""
+        if name:find("%(" .. other_exp .. "%)") or notes:find("master_pool_" .. other_exp) then
+            obj.destruct()
+        end
+    end
+
     local deck = getMasterDeck(ACTIVE_EXPANSION)
     if not deck then 
         broadcastToAll("Error: Master deck not found!", {1,0,0})

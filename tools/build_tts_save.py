@@ -90,9 +90,9 @@ def create_playmat(player_color, pos_x, pos_z, rot_y):
     return {
         "Name": "Custom_Board",
         "Transform": {
-            "posX": pos_x, "posY": 0.9, "posZ": pos_z,
+            "posX": pos_x, "posY": 1.05, "posZ": pos_z,
             "rotX": 0, "rotY": rot_y, "rotZ": 0,
-            "scaleX": 15, "scaleY": 1, "scaleZ": 15
+            "scaleX": 5, "scaleY": 0.1, "scaleZ": 5
         },
         "Nickname": f"{player_color} Playmat",
         "Locked": True,

@@ -1,117 +1,249 @@
---[[
-  TRINITY DRAFT - Tabletop Simulator Global Script
-  Automates pack generation according to official rulebook:
-  - 3-Player Standard: 9 packs of 13 cards (3 per player)
-  - 2-Player DUEL: Custom 2P draft format
-  - Alternating pack passing (Clockwise -> Counter-Clockwise -> Clockwise)
-  - Setup buttons for Trinity Counters and Gained Life tracking
---]]
-
-local DRAFT_ACTIVE = false
-local CURRENT_ROUND = 1
-local NUM_ROUNDS = 3
+-- Trinity Draft - Automated 3-Player Draft
+local STATE = "IDLE"
+local ACTIVE_EXPANSION = nil
+local ROUND = 1
+local PACKS_OPENED_THIS_ROUND = 0
+local TOTAL_PACKS_OPENED = 0
+local PLAYERS = {"Red", "Green", "Blue"}
 local PACK_SIZE = 13
 
--- Seat colors for 3P
-local PLAYERS_3P = {"White", "Red", "Blue"}
-local PLAYERS_2P = {"White", "Red"}
+local draftZones = {}
+local passReady = {Red=false, Green=false, Blue=false}
 
-function onLoad(save_state)
-    createDraftUI()
-    broadcastToAll("Trinity Draft System Loaded. Click 'Start 3P Draft' to begin.", {0.9, 0.8, 0.2})
-end
-
-function createDraftUI()
-    local panelParams = {
-        label = "Start 3P Draft",
-        click_function = "startDraft3P",
-        function_owner = Global,
-        position = {0, 0.5, 25},
-        rotation = {0, 0, 0},
-        width = 1600,
-        height = 400,
-        font_size = 180,
-        color = {0.15, 0.15, 0.2, 0.95},
-        font_color = {1, 0.85, 0.3}
-    }
-    Global.createButton(panelParams)
-
-    panelParams.label = "Pass Packs"
-    panelParams.click_function = "passPacks"
-    panelParams.position = {0, 0.5, 23}
-    panelParams.width = 1200
-    panelParams.color = {0.2, 0.4, 0.2, 0.95}
-    panelParams.font_color = {1, 1, 1}
-    Global.createButton(panelParams)
-
-    panelParams.label = "Reset Table"
-    panelParams.click_function = "resetDraft"
-    panelParams.position = {0, 0.5, 21}
-    panelParams.width = 1000
-    panelParams.color = {0.5, 0.15, 0.15, 0.95}
-    Global.createButton(panelParams)
-end
-
-function startDraft3P()
-    if DRAFT_ACTIVE then
-        broadcastToAll("A draft is already in progress!", {1, 0.3, 0.3})
-        return
-    end
-
-    local poolDeck = findMasterPoolDeck()
-    if not poolDeck then
-        broadcastToAll("Error: Master Card Pool deck not found on the table.", {1, 0.3, 0.3})
-        return
-    end
-
-    DRAFT_ACTIVE = true
-    CURRENT_ROUND = 1
-    broadcastToAll("Generating 9 Draft Packs (13 cards each)...", {0.3, 0.8, 1})
-    poolDeck.shuffle()
+function onLoad()
+    math.randomseed(os.time())
     
-    -- Distribute Round 1 packs
-    distributeRoundPacks()
-end
-
-function findMasterPoolDeck()
-    local allObjs = getAllObjects()
-    for _, obj in ipairs(allObjs) do
-        if obj.tag == "Deck" and obj.getName() == "Trinity Draft Master Pool" then
-            return obj
+    -- Find Draft Zones
+    for _, obj in ipairs(getAllObjects()) do
+        if obj.getName() == "DraftZone_Red" then draftZones["Red"] = obj
+        elseif obj.getName() == "DraftZone_Green" then draftZones["Green"] = obj
+        elseif obj.getName() == "DraftZone_Blue" then draftZones["Blue"] = obj
         end
     end
-    -- Fallback to any deck tagged
-    for _, obj in ipairs(allObjs) do
-        if obj.tag == "Deck" then
+    
+    createMainUI()
+    createPassButtons()
+end
+
+function createMainUI()
+    Global.UI.setXml(
+    [[
+    <Panel id="setupPanel" width="400" height="200" position="0 0 -20" color="#333333E6" active="true">
+        <VerticalLayout padding="20 20 20 20" spacing="10">
+            <Text color="#FFFFFF" fontSize="24">Start Draft</Text>
+            <HorizontalLayout spacing="10">
+                <Button id="btnTD01" onClick="startDraft(TD-01)">Play TD-01</Button>
+                <Button id="btnTD02" onClick="startDraft(TD-02)">Play TD-02</Button>
+            </HorizontalLayout>
+        </VerticalLayout>
+    </Panel>
+    <Panel id="statusPanel" width="400" height="100" position="0 0 -35" color="#000000B3" active="false">
+        <Text id="statusText" color="#FFD700" fontSize="20">Round 1</Text>
+    </Panel>
+    <Panel id="restartPanel" width="300" height="150" position="0 0 -20" color="#333333E6" active="false">
+        <VerticalLayout padding="10 10 10 10" spacing="10">
+            <Button onClick="continueDraft()">Continue (Next 9 Packs)</Button>
+            <Button onClick="restartDraft()">Reshuffle & Restart</Button>
+        </VerticalLayout>
+    </Panel>
+    ]]
+    )
+end
+
+function createPassButtons()
+    local btnParams = {
+        click_function = "clickPass",
+        function_owner = Global,
+        label = "Pass Pack",
+        width = 1200, height = 400, font_size = 200,
+        color = {0.2, 0.6, 0.2}, font_color = {1,1,1}
+    }
+    
+    for _, p in ipairs(PLAYERS) do
+        local z = draftZones[p]
+        if z then
+            local pos = z.getPosition()
+            pos.y = pos.y + 1
+            btnParams.position = pos
+            -- Spawn an invisible token to attach the button to
+            local token = spawnObject({
+                type = "BlockSquare",
+                position = pos,
+                sound = false
+            })
+            token.setInvisibleTo({"Red","Green","Blue","Black","White"})
+            token.setLock(true)
+            token.setName("PassBtn_"..p)
+            token.createButton(btnParams)
+        end
+    end
+end
+
+function clickPass(obj, color, alt_click)
+    -- Find which player's button this is
+    local pName = obj.getName():sub(9)
+    if pName ~= color and color ~= "Black" then
+        broadcastToColor("You cannot pass someone else's pack!", color, {1,0,0})
+        return
+    end
+    
+    if STATE ~= "DRAFTING" then return end
+    if passReady[pName] then return end
+    
+    passReady[pName] = true
+    obj.editButton({index=0, label="Ready!", color={0.5,0.5,0.5}})
+    
+    checkAllPassed()
+end
+
+function checkAllPassed()
+    if passReady["Red"] and passReady["Green"] and passReady["Blue"] then
+        -- All passed, execute pass logic
+        executePass()
+    end
+end
+
+function getMasterDeck(expansion)
+    for _, obj in ipairs(getAllObjects()) do
+        if obj.tag == "Deck" and obj.getGMNotes() == "master_pool_"..expansion then
             return obj
         end
     end
     return nil
 end
 
-function distributeRoundPacks()
-    broadcastToAll("Round " .. CURRENT_ROUND .. " of " .. NUM_ROUNDS .. " - Open your packs!", {1, 0.85, 0.3})
-    local poolDeck = findMasterPoolDeck()
-    if not poolDeck then return end
-
-    -- Direction announcement
-    local dir = (CURRENT_ROUND % 2 == 1) and "Clockwise (Left)" or "Counter-Clockwise (Right)"
-    broadcastToAll("Passing Direction this round: " .. dir, {0.8, 0.8, 0.8})
+function startDraft(player, exp)
+    ACTIVE_EXPANSION = exp
+    ROUND = 1
+    TOTAL_PACKS_OPENED = 0
+    STATE = "DRAFTING"
+    
+    Global.UI.setAttribute("setupPanel", "active", "false")
+    Global.UI.setAttribute("restartPanel", "active", "false")
+    Global.UI.setAttribute("statusPanel", "active", "true")
+    
+    local deck = getMasterDeck(ACTIVE_EXPANSION)
+    if deck then deck.shuffle() end
+    
+    dealRound()
 end
 
-function passPacks(player, alt_click)
-    if not DRAFT_ACTIVE then
-        broadcastToAll("No draft is currently running.", {1, 0.4, 0.4})
+function dealRound()
+    Global.UI.setAttribute("statusText", "text", "Round " .. ROUND .. "\nPassing: " .. getPassDirection())
+    
+    local deck = getMasterDeck(ACTIVE_EXPANSION)
+    if not deck then 
+        broadcastToAll("Error: Master deck not found!", {1,0,0})
         return
     end
-
-    local dir = (CURRENT_ROUND % 2 == 1) and "Clockwise" or "Counter-Clockwise"
-    broadcastToAll("Passing packs " .. dir .. "...", {0.4, 0.9, 0.4})
-    -- Moving cards between seat zones logic
+    
+    -- Deal 13 cards to each player's draft zone
+    for _, p in ipairs(PLAYERS) do
+        local z = draftZones[p]
+        if z then
+            -- Deal 13 cards forming a deck
+            local pos = z.getPosition()
+            pos.y = pos.y + 0.5
+            -- Take 13 cards
+            for i=1, PACK_SIZE do
+                deck.takeObject({
+                    position = pos,
+                    flip = true,
+                    smooth = false
+                })
+            end
+        end
+    end
+    
+    resetPassButtons()
+    broadcastToAll("Round " .. ROUND .. " started! Pick a card and hit Pass.", {0,1,0})
 end
 
-function resetDraft()
-    DRAFT_ACTIVE = false
-    CURRENT_ROUND = 1
-    broadcastToAll("Draft reset. Place cards back into master deck to draft again.", {0.7, 0.7, 0.7})
+function getPassDirection()
+    if ROUND == 2 then return "Right (Anti-Clockwise)" end
+    return "Left (Clockwise)"
+end
+
+function executePass()
+    -- Gather the decks in the draft zones
+    local currentPacks = {}
+    for _, p in ipairs(PLAYERS) do
+        currentPacks[p] = nil
+        local z = draftZones[p]
+        for _, obj in ipairs(z.getObjects()) do
+            if obj.type == "Deck" or obj.type == "Card" then
+                currentPacks[p] = obj
+                break
+            end
+        end
+    end
+    
+    -- Check if packs are empty (i.e. round over)
+    local allEmpty = true
+    for _, p in ipairs(PLAYERS) do
+        if currentPacks[p] then allEmpty = false end
+    end
+    
+    if allEmpty then
+        -- End of Round
+        ROUND = ROUND + 1
+        TOTAL_PACKS_OPENED = TOTAL_PACKS_OPENED + 3
+        if ROUND > NUM_ROUNDS then
+            endDraft()
+        else
+            dealRound()
+        end
+        return
+    end
+    
+    -- Move packs to next player
+    local nextP = {}
+    if ROUND == 2 then
+        nextP = {Red="Blue", Blue="Green", Green="Red"} -- Right
+    else
+        nextP = {Red="Green", Green="Blue", Blue="Red"} -- Left
+    end
+    
+    for p, pack in pairs(currentPacks) do
+        local targetP = nextP[p]
+        local z = draftZones[targetP]
+        local pos = z.getPosition()
+        pos.y = pos.y + 1
+        pack.setPositionSmooth(pos)
+    end
+    
+    resetPassButtons()
+    broadcastToAll("Packs passed " .. getPassDirection() .. ".", {0.8,0.8,0.8})
+end
+
+function resetPassButtons()
+    passReady = {Red=false, Green=false, Blue=false}
+    for _, obj in ipairs(getAllObjects()) do
+        if obj.getName():match("^PassBtn_") then
+            obj.editButton({index=0, label="Pass Pack", color={0.2, 0.6, 0.2}})
+        end
+    end
+end
+
+function endDraft()
+    STATE = "POST_DRAFT"
+    Global.UI.setAttribute("statusText", "text", "Draft Complete!")
+    Global.UI.setAttribute("restartPanel", "active", "true")
+    broadcastToAll("Draft is complete! Build your decks.", {1,1,0})
+end
+
+function continueDraft(player)
+    ROUND = 1
+    STATE = "DRAFTING"
+    Global.UI.setAttribute("restartPanel", "active", "false")
+    dealRound()
+end
+
+function restartDraft(player)
+    -- Group all cards back to the master deck
+    -- In a real scenario we'd script gathering them, but for now we prompt players
+    broadcastToAll("Please drag all cards back into the master deck manually before starting a new set.", {1,0,0})
+    Global.UI.setAttribute("restartPanel", "active", "false")
+    Global.UI.setAttribute("setupPanel", "active", "true")
+    Global.UI.setAttribute("statusPanel", "active", "false")
 end

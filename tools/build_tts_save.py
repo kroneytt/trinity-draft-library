@@ -16,6 +16,8 @@ OUTPUT_SAVE = ROOT / "tts" / "TrinityDraft_Save.json"
 
 DEFAULT_BACK = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/card_back.jpg"
 DEFAULT_FRONT_BASE = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/en/"
+TABLE_URL = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/table.jpg"
+COMPONENT_BASE = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/components/"
 PLAYMAT_URL = "https://raw.githubusercontent.com/kroneytt/trinity-draft-library/main/images/playmat.jpg"
 
 RARITY_MULTIPLIERS = {
@@ -86,34 +88,116 @@ def create_deck_obj(name, desc, cards_list, pos_x, pos_z, rot_y, start_idx):
     }
     return deck_obj, idx
 
-def create_playmat(player_color, pos_x, pos_z, rot_y):
+# ---- Table geometry --------------------------------------------------------
+# These are only the *starting* positions. On first load Global.lua measures a
+# real card, rescales the mats so the printed card outlines match, and lays the
+# table out again with the measured sizes (see layoutTable in Global.lua).
+CARD_W_GUESS = 2.14                      # approx TTS card width at scale 1
+MAT_W_CW = 1024 / 120                    # playmat is 8.53 card widths wide
+MAT_D_CW = MAT_W_CW * 595 / 1024
+SEAT_ANGLES = {"Red": 0, "Green": 120, "Blue": 240}   # rotY; Green top-left, Blue top-right
+
+
+def seat_point(color, right_cw, forward_cw, y):
+    """Mat-local (right, forward-towards-centre) in card widths -> world x, y, z."""
+    a = math.radians(SEAT_ANGLES[color])
+    rx, rz = math.cos(a), -math.sin(a)
+    fx, fz = math.sin(a), math.cos(a)
+    side = MAT_W_CW + 0.15
+    r = (side / (2 * math.sqrt(3)) + MAT_D_CW / 2) * CARD_W_GUESS
+    cx, cz = -fx * r, -fz * r
+    return (cx + (rx * right_cw + fx * forward_cw) * CARD_W_GUESS, y,
+            cz + (rz * right_cw + fz * forward_cw) * CARD_W_GUESS)
+
+
+def create_playmat(player_color):
+    # A thin Custom Tile (not a Custom Board - boards are thick wooden slabs).
+    x, y, z = seat_point(player_color, 0, 0, 1.2)
     return {
-        "Name": "Custom_Board",
+        "Name": "Custom_Tile",
         "Transform": {
-            "posX": pos_x, "posY": 1.05, "posZ": pos_z,
-            "rotX": 0, "rotY": rot_y, "rotZ": 0,
-            "scaleX": 5, "scaleY": 0.1, "scaleZ": 5
+            "posX": x, "posY": y, "posZ": z,
+            "rotX": 0, "rotY": SEAT_ANGLES[player_color], "rotZ": 0,
+            "scaleX": 1, "scaleY": 1, "scaleZ": 1,   # Global.lua rescales to card size
         },
         "Nickname": f"{player_color} Playmat",
+        "GMNotes": f"playmat_{player_color}",
         "Locked": True,
         "CustomImage": {
             "ImageURL": PLAYMAT_URL,
             "ImageSecondaryURL": "",
             "ImageScalar": 1.0,
-            "WidthScale": 0.0
-        }
+            "WidthScale": 0.0,
+            "CustomTile": {
+                "Type": 0,          # box / rectangle
+                "Thickness": 0.1,   # thin like a neoprene mat
+                "Stackable": False,
+                "Stretch": True,    # keep the image's 1024x595 shape
+            },
+        },
     }
 
-def create_scripting_zone(name, pos_x, pos_z, rot_y):
+
+def create_picks_zone(player_color):
+    # Scripting zone over the mat's deck slot (pixel 908,307). During the draft a
+    # player drops their pick here; Global.lua stacks it face down.
+    x, y, z = seat_point(player_color, (908 - 512) / 120, (297.5 - 307) / 120, 2)
     return {
         "Name": "ScriptingTrigger",
         "Transform": {
-            "posX": pos_x, "posY": 1.5, "posZ": pos_z,
-            "rotX": 0, "rotY": rot_y, "rotZ": 0,
-            "scaleX": 8, "scaleY": 4, "scaleZ": 4
+            "posX": x, "posY": y, "posZ": z,
+            "rotX": 0, "rotY": SEAT_ANGLES[player_color], "rotZ": 0,
+            "scaleX": 1.6 * CARD_W_GUESS, "scaleY": 4, "scaleZ": 2.0 * CARD_W_GUESS
         },
-        "Nickname": name
+        "Nickname": f"PicksZone_{player_color}",
+        "GMNotes": f"pickszone_{player_color}",
     }
+
+
+def create_component(name, notes, face_url, count, x, z, rot_y, start_idx, face_up=True):
+    """A single card (count=1) or a deck of identical component cards (Reserve, Wall, colour cards)."""
+    idx = start_idx + 1
+    custom = {str(idx): {"FaceURL": face_url, "BackURL": DEFAULT_BACK, "NumWidth": 1, "NumHeight": 1,
+                         "BackIsHidden": True, "UniqueBack": False, "Type": 0}}
+    tr = {"posX": x, "posY": 2, "posZ": z, "rotX": 0, "rotY": rot_y, "rotZ": 0 if face_up else 180,
+          "scaleX": 1, "scaleY": 1, "scaleZ": 1}
+    card = {"Name": "Card", "Transform": dict(tr), "Nickname": name, "GMNotes": notes,
+            "CardID": idx * 100, "CustomDeck": custom}
+    if count == 1:
+        return card, idx
+    cards = [dict(card) for _ in range(count)]
+    return {"Name": "Deck", "Transform": tr, "Nickname": name, "GMNotes": notes,
+            "DeckIDs": [idx * 100] * count, "CustomDeck": custom, "ContainedObjects": cards}, idx
+
+
+def create_battle_components(start_idx):
+    """Reserve x3, Wall card x3, basic colour cards 4 x 16, and the Trinity Counter bag.
+    Global.lua moves them to their rulebook positions (p.26-27) on first load."""
+    objs, idx = [], start_idx
+    for i, c in enumerate(("Red", "Green", "Blue")):
+        o, idx = create_component(f"Reserve ({c})", f"reserve_{c}", COMPONENT_BASE + "reserve_card.jpg", 1, -6 + 3 * i, -3, 0, idx)
+        o["Description"] = ("Activate <Trinity Charge> [Turn 1] Pay 3 colour > Trinity Counter +1\n"
+                            "Activate <Trinity Draw> Remove 3 of your Trinity Counters > Draw 1 card.\n"
+                            "Trinity Counter MAX: 10")
+        objs.append(o)
+    for a, b in (("Red", "Green"), ("Green", "Blue"), ("Blue", "Red")):
+        o, idx = create_component(f"Wall ({a}-{b})", f"wallcard_{a}_{b}", COMPONENT_BASE + "wall_card.jpg", 1, 0, 3, 0, idx)
+        o["Description"] = "4 squares between two players. Damage pushes the wall 1 square towards the defender."
+        objs.append(o)
+    for i, col in enumerate(("Red", "Yellow", "Purple", "Blue")):
+        o, idx = create_component(f"Basic Colour: {col}", f"colordeck_{col}", COMPONENT_BASE + f"color_{col.lower()}.jpg",
+                                  16, -4.5 + 3 * i, 6, 0, idx)
+        objs.append(o)
+    objs.append({
+        "Name": "Bag", "Nickname": "Trinity Counters", "GMNotes": "counter_bag",
+        "Description": "30 Trinity Counters. Global.lua fills this bag on first load.",
+        "Transform": {"posX": 0, "posY": 2, "posZ": 9, "rotX": 0, "rotY": 0, "rotZ": 0,
+                      "scaleX": 0.7, "scaleY": 0.7, "scaleZ": 0.7},
+        "ColorDiffuse": {"r": 0.15, "g": 0.55, "b": 0.42},
+        "ContainedObjects": [],
+    })
+    return objs, idx
+
 
 def build_tts_save():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
@@ -128,88 +212,84 @@ def build_tts_save():
     object_states = []
     global_idx = 0
 
-    # 3 Players: Red (bottom), Green (top-left), Blue (top-right)
-    # Radius around center: ~18 units for playmats, ~10 for drafting zones
-    players = [
-        {"color": "Red",   "angle": 0},
-        {"color": "Green", "angle": 120},
-        {"color": "Blue",  "angle": 240}
-    ]
+    players = [{"color": c} for c in ("Red", "Green", "Blue")]
 
     for p in players:
-        a_rad = math.radians(p["angle"])
-        # Playmat positions
-        pm_r = 18
-        pm_x = math.sin(a_rad) * pm_r
-        pm_z = math.cos(a_rad) * -pm_r
-        object_states.append(create_playmat(p["color"], pm_x, pm_z, p["angle"]))
+        object_states.append(create_playmat(p["color"]))
+        object_states.append(create_picks_zone(p["color"]))
 
-        # Drafting Zones (closer to center)
-        dz_r = 10
-        dz_x = math.sin(a_rad) * dz_r
-        dz_z = math.cos(a_rad) * -dz_r
-        object_states.append(create_scripting_zone(f"DraftZone_{p['color']}", dz_x, dz_z, p["angle"]))
-
-    # Hand Zones
+    # Hand zones behind each mat, facing the centre. Modern TTS saves define hands
+    # as HandTrigger objects; the legacy "Hands" block below is kept as well.
     hands = []
     for p in players:
-        a_rad = math.radians(p["angle"])
-        h_r = 28
+        x, y, z = seat_point(p["color"], 0, -(MAT_D_CW / 2 + 2.0), 4)
+        object_states.append({
+            "Name": "HandTrigger",
+            "Transform": {
+                "posX": x, "posY": y, "posZ": z,
+                "rotX": 0, "rotY": SEAT_ANGLES[p["color"]], "rotZ": 0,
+                "scaleX": MAT_W_CW * CARD_W_GUESS, "scaleY": 5, "scaleZ": 4,
+            },
+            "Nickname": f"{p['color']} Hand",
+            "FogColor": p["color"],
+            "Locked": True,
+        })
         hands.append({
             "Color": p["color"],
             "Transform": {
-                "posX": math.sin(a_rad) * h_r,
-                "posY": 4,
-                "posZ": math.cos(a_rad) * -h_r,
-                "rotX": 0, "rotY": p["angle"], "rotZ": 0,
-                "scaleX": 15, "scaleY": 4, "scaleZ": 4
+                "posX": x, "posY": y, "posZ": z,
+                "rotX": 0, "rotY": SEAT_ANGLES[p["color"]], "rotZ": 0,
+                "scaleX": MAT_W_CW * CARD_W_GUESS, "scaleY": 5, "scaleZ": 4
             }
         })
 
-    # Master Pools in the center
-    master_pos_offset = -3
+    # Master pools side by side in the shared centre; Epics beside each deck slot.
+    pool_x = {"TD-01": -0.7 * CARD_W_GUESS, "TD-02": 0.7 * CARD_W_GUESS}
     for exp in expansions:
         exp_cards = [c for c in cards if c["expansion"] == exp]
         draft_cards = [c for c in exp_cards if c["rarity"] != "Epic"]
+        # The Void card ("TD ACT1 VOID") is in every box (9 copies) but cards.json
+        # files it under TD-02 only, which left the TD-01 pool 9 cards short.
+        if not any(c["rarity"] == "Void" for c in draft_cards):
+            draft_cards += [c for c in cards if c["rarity"] == "Void"][:1]
         epic_cards = [c for c in exp_cards if c["rarity"] == "Epic"]
 
-        # Build box multiset
         box_cards = []
         for c in draft_cards:
-            count = RARITY_MULTIPLIERS.get(c["rarity"], 1)
-            for _ in range(count):
-                box_cards.append(c)
+            box_cards.extend([c] * RARITY_MULTIPLIERS.get(c["rarity"], 1))
 
         if box_cards:
-            deck, global_idx = create_deck_obj(f"Master Pool ({exp})", f"{len(box_cards)} Cards", box_cards, master_pos_offset, 0, 0, global_idx)
-            # Give decks GMNotes to identify them easily in lua
+            deck, global_idx = create_deck_obj(f"Master Pool ({exp})", f"{len(box_cards)} Cards",
+                                               box_cards, pool_x.get(exp, 0), 0, 0, global_idx)
             deck["GMNotes"] = f"master_pool_{exp}"
             object_states.append(deck)
 
-        # Distribute Epics onto playmats
         if epic_cards:
             for p in players:
-                a_rad = math.radians(p["angle"])
-                ep_r = 22 # Outside edge of playmat
-                ep_x = math.sin(a_rad) * ep_r + (master_pos_offset * math.cos(a_rad))
-                ep_z = math.cos(a_rad) * -ep_r - (master_pos_offset * math.sin(a_rad))
-                deck, global_idx = create_deck_obj(f"{p['color']} Epics ({exp})", "4 Epics", epic_cards, ep_x, ep_z, p["angle"], global_idx)
+                # Separate spot per expansion so the two Epic decks don't merge.
+                ex, _, ez = seat_point(p["color"], MAT_W_CW / 2 + 0.9,
+                                       (297.5 - 307) / 120 + (1.6 if exp == "TD-02" else 0), 3)
+                deck, global_idx = create_deck_obj(f"{p['color']} Epics ({exp})", "4 Epics", epic_cards,
+                                                   ex, ez, SEAT_ANGLES[p["color"]], global_idx)
+                deck["GMNotes"] = f"epics_{p['color']}_{exp}"
                 object_states.append(deck)
 
-        master_pos_offset += 6
+    comps, global_idx = create_battle_components(global_idx)
+    object_states.extend(comps)
 
     save_data = {
         "SaveName": "Trinity Draft - English Mod",
         "GameMode": "Trinity Draft",
         "Date": "2026",
-        "Table": "Table_Hexagon",
+        "Table": "Table_Custom",          # "Custom Rectangle" - the largest built-in table
+        "TableURL": TABLE_URL,
         "LuaScript": lua_script,
         "LuaScriptState": "",
         "ObjectStates": object_states,
         "Hands": {
             "Enable": True,
-            "DisableUnused": True,
-            "Hiding": 1,
+            "DisableUnused": False,  # keep empty seats' hands so packs can be dealt to them
+            "Hiding": 0,  # 0 = Default: only the owner sees their hand (1 = Reverse hid it from the owner)
             "HandTransforms": hands
         }
     }

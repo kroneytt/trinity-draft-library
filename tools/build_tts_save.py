@@ -174,15 +174,12 @@ def create_battle_components(start_idx):
     """Reserve x3, Wall card x3, basic colour cards 4 x 16, and the Trinity Counter bag.
     Global.lua moves them to their rulebook positions (p.26-27) on first load."""
     objs, idx = [], start_idx
+    # Reserve uses an English version of the card art, so no hover tooltip is needed.
     for i, c in enumerate(("Red", "Green", "Blue")):
-        o, idx = create_component(f"Reserve ({c})", f"reserve_{c}", COMPONENT_BASE + "reserve_card.jpg", 1, -6 + 3 * i, -3, 0, idx)
-        o["Description"] = ("Activate <Trinity Charge> [Turn 1] Pay 3 colour > Trinity Counter +1\n"
-                            "Activate <Trinity Draw> Remove 3 of your Trinity Counters > Draw 1 card.\n"
-                            "Trinity Counter MAX: 10")
+        o, idx = create_component(f"Reserve ({c})", f"reserve_{c}", COMPONENT_BASE + "reserve_card_en.jpg", 1, -6 + 3 * i, -3, 0, idx)
         objs.append(o)
     for a, b in (("Red", "Green"), ("Green", "Blue"), ("Blue", "Red")):
         o, idx = create_component(f"Wall ({a}-{b})", f"wallcard_{a}_{b}", COMPONENT_BASE + "wall_card.jpg", 1, 0, 3, 0, idx)
-        o["Description"] = "4 squares between two players. Damage pushes the wall 1 square towards the defender."
         objs.append(o)
     for i, col in enumerate(("Red", "Yellow", "Purple", "Blue")):
         o, idx = create_component(f"Basic Colour: {col}", f"colordeck_{col}", COMPONENT_BASE + f"color_{col.lower()}.jpg",
@@ -190,7 +187,6 @@ def create_battle_components(start_idx):
         objs.append(o)
     objs.append({
         "Name": "Bag", "Nickname": "Trinity Counters", "GMNotes": "counter_bag",
-        "Description": "30 Trinity Counters. Global.lua fills this bag on first load.",
         "Transform": {"posX": 0, "posY": 2, "posZ": 9, "rotX": 0, "rotY": 0, "rotZ": 0,
                       "scaleX": 0.7, "scaleY": 0.7, "scaleZ": 0.7},
         "ColorDiffuse": {"r": 0.15, "g": 0.55, "b": 0.42},

@@ -56,7 +56,7 @@ local atan2 = math.atan2 or math.atan
 local pickLabels = {}
 
 local LAID_OUT = false
-local MAT_YAW  = 0          -- extra mat rotation; the "Rotate playmats" button toggles 0 / 180
+local MAT_YAW  = 180        -- Custom Tiles show their image rotated 180 degrees, so the mats are turned to compensate
 
 local STATE = "IDLE"        -- IDLE | DEALING | DRAFTING | MOVING | POST_DRAFT
 local ACTIVE_EXPANSION = nil
@@ -66,7 +66,6 @@ local packCards = {}        -- GUID -> true for cards still in the open pack
 local pileOf    = {}        -- GUID -> colour, for cards already picked
 local pickCount = {Red = 0, Green = 0, Blue = 0}
 local picksZones = {}       -- colour -> scripting zone over the PICKS pile
-local pendingPick = nil     -- GUID of a card dropped on the pile but not yet confirmed
 
 ------------------------------------------------------------------ helpers
 
@@ -165,16 +164,9 @@ local function calibrate()
     log(string.format("[TD layout] card width %.2f, mat %.2f x %.2f cw, seat radius %.2f", CW, MAT_W, MAT_D, SEAT_R))
 end
 
-local function rotateMats()
-    for _, p in ipairs(PLAYERS) do
-        local mat = findByNotes("playmat_" .. p)
-        if mat then mat.setRotation({0, ANGLE[p] + MAT_YAW, 0}) end
-    end
-end
-
 local function pilePoint(color, height)
     local d = MAT_ZONES.deck
-    return seatPoint(color, d[1], d[2], 1.6 + (height or 0) * 0.02)
+    return seatPoint(color, d[1], d[2], 1.8 + (height or 0) * 0.03)
 end
 
 function layoutTable()
@@ -237,39 +229,75 @@ local function wallGeometry(a, b)
     return {vx * WALL_DIST * CW, vz * WALL_DIST * CW}, {ux, uz}, yaw
 end
 
-function placeCards()
-    local y = 3
-    local inr = (MAT_W + MAT_GAP_CW) / (2 * math.sqrt(3))   -- centre to each mat's top edge, cw
+-- Drops an object a little above where it should rest, then locks it once it has landed.
+local function dropAndLock(obj, pos, rot)
+    obj.setLock(false)
+    obj.setPosition({pos[1], pos[2] + 0.4, pos[3]})
+    obj.setRotation(rot)
+    Wait.time(function() obj.setLock(true) end, 2)
+end
 
-    -- Master pools wait outside the triangle, beyond the corner between Green and Blue.
-    local poolZ = (2 * inr + 2.0) * CW
-    local m1, m2 = findByNotes("master_pool_TD-01"), findByNotes("master_pool_TD-02")
-    if m1 then m1.setPosition({-0.7 * CW, y, poolZ}); m1.setRotation({0, 180, 180}) end
-    if m2 then m2.setPosition({ 0.7 * CW, y, poolZ}); m2.setRotation({0, 180, 180}) end
+-- Storage area in the table's top-left corner (beyond the Green mat) for pieces that
+-- are not in use yet: the master pools until a set is drafted, the Wall cards until
+-- the first player is chosen. Slot i runs left to right.
+local function storagePoint(i)
+    local hx, hz = 34, 21
+    local ok, tbl = pcall(function() return Tables.getTableObject() end)
+    if ok and tbl then
+        local size = tbl.getBounds().size
+        if size.x > 0 then hx, hz = size.x / 2, size.z / 2 end
+    end
+    return {-hx + 2.5 + (i - 1) * 1.3 * CW, 3, hz - 2.8}
+end
 
-    -- (1) Reserve: top centre of each mat, landscape, ability text towards its owner.
-    for _, p in ipairs(PLAYERS) do
-        local r = findByNotes("reserve_" .. p)
-        if r then
-            r.setPosition(seatPoint(p, RESERVE_POS[1], RESERVE_POS[2], 2))
-            r.setRotation({0, ANGLE[p] - 90, 0})
-            r.setLock(true)
+local function placeWallCardsInStorage()
+    for i, pair in ipairs(WALL_PAIRS) do
+        local w = findByNotes("wallcard_" .. pair[1] .. "_" .. pair[2])
+        if w then
+            w.setLock(false)
+            w.setPosition(storagePoint(2 + i))
+            w.setRotation({0, 180, 0})
         end
     end
+end
 
-    -- (4) Wall cards between each pair of players, diagonally in front of the Reserves.
+-- (4) Wall cards between each pair of players, diagonally in front of the Reserves.
+local function placeWallCards()
+    local tableY = 1
+    local mat = findByNotes("playmat_Red")
+    if mat then local b = mat.getBounds(); tableY = b.center.y - b.size.y / 2 end
     for _, pair in ipairs(WALL_PAIRS) do
         local w = findByNotes("wallcard_" .. pair[1] .. "_" .. pair[2])
         if w then
             local c, _, yaw = wallGeometry(pair[1], pair[2])
-            w.setPosition({c[1], 2, c[2]})
-            w.setRotation({0, yaw, 0})
-            w.setLock(true)
+            dropAndLock(w, {c[1], tableY + 0.1, c[2]}, {0, yaw, 0})
             local snaps = {}
             for _, off in ipairs(WALL_SQUARES) do
                 table.insert(snaps, {position = {0, 0.1, off * CW}, rotation = {0, 0, 0}, rotation_snap = true})
             end
             w.setSnapPoints(snaps)
+        end
+    end
+end
+
+function placeCards()
+    local y = 3
+
+    -- Master pools wait in the storage corner (the draft deals from them by script).
+    local m1, m2 = findByNotes("master_pool_TD-01"), findByNotes("master_pool_TD-02")
+    if m1 then m1.setPosition(storagePoint(1)); m1.setRotation({0, 180, 180}) end
+    if m2 then m2.setPosition(storagePoint(2)); m2.setRotation({0, 180, 180}) end
+    placeWallCardsInStorage()
+
+    -- (1) Reserve: top centre of each mat, landscape, ability text towards its owner.
+    -- It is dropped onto the mat and then locked, so it rests on the mat instead of floating.
+    for _, p in ipairs(PLAYERS) do
+        local r = findByNotes("reserve_" .. p)
+        local mat = findByNotes("playmat_" .. p)
+        if r then
+            local top = 1.2
+            if mat then local b = mat.getBounds(); top = b.center.y + b.size.y / 2 end
+            dropAndLock(r, seatPoint(p, RESERVE_POS[1], RESERVE_POS[2], top + 0.05), {0, ANGLE[p] - 90, 0})
         end
     end
 
@@ -361,7 +389,10 @@ function placeWallMarkers(first)
         local a, b = pair[1], pair[2]
         local c, u, yaw = wallGeometry(a, b)
         local off = (b == first) and WALL_SQUARES[3] or WALL_SQUARES[2]   -- square next to the middle, on that side
-        local pos = {c[1] + u[1] * off * CW, 2.4, c[2] + u[2] * off * CW}
+        local w = findByNotes("wallcard_" .. a .. "_" .. b)
+        local wy = 1.2
+        if w then local bb = w.getBounds(); wy = bb.center.y + bb.size.y / 2 end
+        local pos = {c[1] + u[1] * off * CW, wy + 0.3, c[2] + u[2] * off * CW}
         spawnSizedToken(tokenData("Wall", "wall_marker", "wall_marker.png", 0.12, false, pos, yaw, 1), 1.15 * CW)
     end
 end
@@ -371,7 +402,8 @@ function setFirstPlayer(player, first)
     if first ~= "Red" and first ~= "Green" and first ~= "Blue" then return end
     local second = NEXT_CLOCKWISE[first]
     local third  = NEXT_CLOCKWISE[second]
-    placeWallMarkers(first)
+    placeWallCards()
+    Wait.time(function() placeWallMarkers(first) end, 2.2)   -- after the Wall cards have landed
     Global.UI.setAttribute("restartPanel", "active", "false")
     updateStatus("Battle: " .. first .. " -> " .. second .. " -> " .. third .. " (clockwise)")
     broadcastToAll("Turn order: 1st " .. first .. ", 2nd " .. second .. ", 3rd " .. third .. ". Walls placed: " ..
@@ -379,17 +411,10 @@ function setFirstPlayer(player, first)
         third .. " starts with both walls Favourable. Everyone draws 5, then: Awakening! Trinity Draft!", {1, 1, 0.6})
 end
 
--- Button on the setup panel: if a mat image appears upside down, this turns all
--- three mats 180 degrees (the layout of cards and zones does not change).
-function toggleMatRotation(player)
-    MAT_YAW = (MAT_YAW == 0) and 180 or 0
-    rotateMats()
-end
-
 ------------------------------------------------------------------ save / load
 
 function onSave()
-    return JSON.encode({laidOut = LAID_OUT, matYaw = MAT_YAW})
+    return JSON.encode({laidOut = LAID_OUT})
 end
 
 function onLoad(saved)
@@ -397,7 +422,6 @@ function onLoad(saved)
     local ok, data = pcall(function() return JSON.decode(saved or "") end)
     if ok and type(data) == "table" then
         if data.laidOut then LAID_OUT = true end
-        if data.matYaw then MAT_YAW = data.matYaw end
     end
 
     for _, obj in ipairs(getObjects()) do
@@ -417,6 +441,7 @@ function onLoad(saved)
 
     createMainUI()
     if not LAID_OUT then Wait.frames(layoutTable, 10) end
+    Wait.time(pickWatcher, 0.25, -1)
 end
 
 ------------------------------------------------------------------ UI
@@ -430,14 +455,13 @@ function createMainUI()
         <Text fontSize="24" color="#FFFFFF" outline="#000000" outlineSize="1" />
     </Defaults>
 
-    <Panel id="setupPanel" width="420" height="250" offsetXY="0 0" active="true">
+    <Panel id="setupPanel" width="420" height="200" offsetXY="0 0" active="true">
         <VerticalLayout padding="20 20 20 20" spacing="10">
             <Text>Start Draft</Text>
             <HorizontalLayout spacing="10" preferredHeight="60">
                 <Button id="btnTD01" onClick="startDraft(TD-01)">Play TD-01</Button>
                 <Button id="btnTD02" onClick="startDraft(TD-02)">Play TD-02</Button>
             </HorizontalLayout>
-            <Button onClick="toggleMatRotation" fontSize="14" preferredHeight="34">Playmat upside down? Rotate playmats 180</Button>
         </VerticalLayout>
     </Panel>
 
@@ -448,8 +472,8 @@ function createMainUI()
     <Panel id="turnPanel" width="560" height="120" rectAlignment="LowerCenter" offsetXY="0 230" color="#0B3D2EE6" active="false" visibility="Red">
         <VerticalLayout padding="12 12 8 8" spacing="4">
             <Text fontSize="30" color="#7CFFC4">YOUR PICK</Text>
-            <Text fontSize="17">Drag ONE card from your hand onto your playmat.
-The rest of the pack goes to the next player automatically.</Text>
+            <Text fontSize="17">Drag ONE card from your hand and drop it on your playmat.
+After a second it goes to your PICKS pile and the rest of the pack moves on.</Text>
         </VerticalLayout>
     </Panel>
 
@@ -578,7 +602,6 @@ end
 
 function startTurn()
     STATE = "DRAFTING"
-    pendingPick = nil
     refreshStatus()
     Global.UI.setAttribute("turnPanel", "visibility", TURN)
     Global.UI.setAttribute("turnPanel", "active", "true")
@@ -586,59 +609,68 @@ function startTurn()
 end
 
 ------------------------------------------------------------------ draft: picking
+--
+-- A pick is detected by looking, four times a second, for pack cards that lie on a
+-- playmat and are not being held. (Zone enter/leave events fire while the card is
+-- still being dragged, so they are not reliable for this.)
 
-local function zoneOwner(zone)
-    for _, p in ipairs(PLAYERS) do
-        if picksZones[p] == zone then return p end
-    end
-    return nil
+local candidate, candidateTicks, warnedTwo = nil, 0, false
+local CONFIRM_TICKS = math.floor(PICK_CONFIRM_SECONDS / 0.25 + 0.5)
+
+-- Is a world position on a player's playmat?
+local function onMat(color, pos)
+    local a = rad(color)
+    local c = seatPoint(color, 0, 0, 0)
+    local dx, dz = pos.x - c[1], pos.z - c[3]
+    local right   = ( dx * math.cos(a) - dz * math.sin(a)) / CW
+    local forward = ( dx * math.sin(a) + dz * math.cos(a)) / CW
+    return math.abs(right) <= MAT_W / 2 and math.abs(forward) <= MAT_D / 2
 end
 
--- Pack cards (not yet picked) currently sitting on a player's PICKS pile.
-local function packCardsOnPile(color)
-    local list = {}
-    local z = picksZones[color]
-    if not z then return list end
-    for _, obj in ipairs(z.getObjects()) do
-        if packCards[obj.getGUID()] then table.insert(list, obj) end
+function pickWatcher()
+    if STATE ~= "DRAFTING" or not TURN then candidate = nil; return end
+
+    local mine = {}
+    for guid in pairs(packCards) do
+        local obj = getObjectFromGUID(guid)
+        if obj and not obj.held_by_color then
+            local pos = obj.getPosition()
+            for _, p in ipairs(PLAYERS) do
+                if onMat(p, pos) then
+                    if p == TURN then
+                        table.insert(mine, obj)
+                    else
+                        broadcastToAll("It is " .. TURN .. "'s pick - that card goes back to " .. TURN .. ".", {1, 0.5, 0.3})
+                        obj.deal(1, TURN)
+                    end
+                end
+            end
+        end
     end
-    return list
+
+    if #mine == 1 then
+        warnedTwo = false
+        local guid = mine[1].getGUID()
+        if candidate == guid then
+            candidateTicks = candidateTicks + 1
+            if candidateTicks >= CONFIRM_TICKS then
+                candidate = nil
+                confirmPick(TURN, mine[1])
+            end
+        else
+            candidate, candidateTicks = guid, 0
+        end
+    else
+        candidate = nil
+        if #mine > 1 and not warnedTwo then
+            warnedTwo = true
+            broadcastToColor("Only one card per pick - take " .. (#mine - 1) .. " back into your hand.", TURN, {1, 0.4, 0.4})
+        end
+    end
 end
 
-function onObjectEnterZone(zone, obj)
-    local owner = zoneOwner(zone)
-    if not owner or not packCards[obj.getGUID()] then return end
-    if STATE ~= "DRAFTING" then return end
-
-    if owner ~= TURN then
-        broadcastToAll("It is " .. TURN .. "'s pick - that card goes back to " .. TURN .. ".", {1, 0.5, 0.3})
-        obj.deal(1, TURN)
-        return
-    end
-
-    local onPile = packCardsOnPile(owner)
-    if #onPile > 1 then
-        broadcastToColor("Only one card per pick - take " .. (#onPile - 1) .. " back into your hand.", owner, {1, 0.4, 0.4})
-        pendingPick = nil
-        return
-    end
-    pendingPick = obj.getGUID()
-    Wait.time(function() confirmPick(owner, pendingPick) end, PICK_CONFIRM_SECONDS)
-end
-
-function onObjectLeaveZone(zone, obj)
-    local owner = zoneOwner(zone)
-    if owner and owner == TURN and pendingPick == obj.getGUID() then
-        pendingPick = nil      -- dragged back before it was confirmed
-    end
-end
-
-function confirmPick(color, guid)
-    if STATE ~= "DRAFTING" or color ~= TURN or guid == nil or pendingPick ~= guid then return end
-    local onPile = packCardsOnPile(color)
-    if #onPile ~= 1 or onPile[1].getGUID() ~= guid then return end
-
-    local card = onPile[1]
+function confirmPick(color, card)
+    if STATE ~= "DRAFTING" or color ~= TURN then return end
     STATE = "MOVING"
     addToPile(color, card)
 
